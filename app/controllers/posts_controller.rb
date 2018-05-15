@@ -30,6 +30,11 @@ class PostsController < ApplicationController
     end
   end
 
+  def destroy
+    @post.delete
+    redirect_to posts_path, notice: 'Your post was deleted successfully'
+  end
+
   def show; end
 
   private
