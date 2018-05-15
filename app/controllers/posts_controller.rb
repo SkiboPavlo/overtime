@@ -1,6 +1,6 @@
 #
 class PostsController < ApplicationController
-  before_action :set_posts, only: %i[show edit destroy]
+  before_action :set_posts, only: %i[show edit destroy update]
   
   def index
     @posts = Post.all
@@ -10,6 +10,8 @@ class PostsController < ApplicationController
     @post = Post.new
   end
 
+  def edit; end
+
   def create
     @post = Post.new(post_params)
     @post.user_id = current_user.id
@@ -17,6 +19,14 @@ class PostsController < ApplicationController
       redirect_to @post, notice: 'Your post was created successfully'
     else
       render :new
+    end
+  end
+
+  def update
+    if @post.update(post_params)
+      redirect_to @post, notice: 'Your post was updated successfully'
+    else
+      render :edit
     end
   end
 
