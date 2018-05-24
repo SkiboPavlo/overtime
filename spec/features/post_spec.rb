@@ -25,6 +25,16 @@ describe 'navigate' do
       visit posts_path
       expect(page).to have_content(/Rationale|content/)
     end
+
+    it 'has a scope so that only post creators can see their posts' do
+      FactoryGirl.build_stubbed(:post, user_id: @user.id)
+      FactoryGirl.build_stubbed(:second_post, user_id: @user.id)
+      other_user = FactoryGirl.build_stubbed(:non_authorized_user)
+      FactoryGirl.build_stubbed(:post, rationale: 'asdf',
+                                       user_id: other_user.id)
+      visit posts_path
+      expect(page).to_not have_content(/asdf/)
+    end
   end
 
   describe 'new' do
@@ -38,7 +48,7 @@ describe 'navigate' do
 
   describe 'delete' do
     it 'can be deleted' do
-      @post = FactoryGirl.create(:post)
+      @post = FactoryGirl.create(:post, user_id: @user.id)
       visit posts_path
 
       click_link("delete_post_#{@post.id}_from_index")
