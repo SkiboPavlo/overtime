@@ -1,9 +1,11 @@
 require 'rails_helper'
 
 describe 'navigate' do
+  let(:user) { FactoryGirl.create(:user) }
+  let(:post) { FactoryGirl.create(:post, user_id: user.id) }
+
   before do
-    @user = FactoryGirl.create(:user)
-    login_as(@user, scope: :user)
+    login_as(user, scope: :user)
   end
 
   describe 'index' do
@@ -27,8 +29,6 @@ describe 'navigate' do
     end
 
     it 'has a scope so that only post creators can see their posts' do
-      FactoryGirl.build_stubbed(:post, user_id: @user.id)
-      FactoryGirl.build_stubbed(:second_post, user_id: @user.id)
       other_user = FactoryGirl.build_stubbed(:non_authorized_user)
       FactoryGirl.build_stubbed(:post, rationale: 'asdf',
                                        user_id: other_user.id)
@@ -48,7 +48,7 @@ describe 'navigate' do
 
   describe 'delete' do
     it 'can be deleted' do
-      @post = FactoryGirl.create(:post, user_id: @user.id)
+      @post = FactoryGirl.create(:post, user_id: user.id)
       visit posts_path
 
       click_link("delete_post_#{@post.id}_from_index")
@@ -82,14 +82,8 @@ describe 'navigate' do
   end
 
   describe 'edit' do
-    before do
-      @user = FactoryGirl.create(:user)
-      login_as(@user, scope: :user)
-      @post = FactoryGirl.create(:post, user_id: @user.id)
-    end
-
     it 'can be edited' do
-      visit edit_post_path(@post)
+      visit edit_post_path(post)
       fill_in 'post[date]', with: Date.today
       fill_in 'post[rationale]', with: 'Edited content'
       click_on 'Save'
@@ -102,7 +96,7 @@ describe 'navigate' do
       non_authorized_user = FactoryGirl.create(:non_authorized_user)
       login_as(non_authorized_user, scope: :user)
 
-      visit edit_post_path(@post)
+      visit edit_post_path(post)
 
       expect(current_path).to eq(root_path)
     end
