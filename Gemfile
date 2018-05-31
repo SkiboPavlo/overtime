@@ -20,6 +20,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'jbuilder', '~> 2.5'
 gem 'jquery-rails'
 gem 'turbolinks', '~> 5'
+gem 'twilio-ruby', '~> 5.10', '>= 5.10.2'
 
 group :development, :test do
   gem 'byebug'
